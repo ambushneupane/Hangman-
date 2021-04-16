@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 # Setup Display
 pygame.init()
@@ -28,8 +29,10 @@ for i in range(26):
     letters.append([x, y, chr(A + i), True])
 
 # Fonts
+
 LETTER_FONT = pygame.font.SysFont("comicsans", 40)
 WORD_FONT = pygame.font.SysFont("comicsans", 60)
+TITLE_FONT=pygame.font.SysFont("comicsans", 80)
 
 # Loading Images
 images = []
@@ -39,7 +42,11 @@ for i in range(7):
 
 # Game Variables
 hangman_status = 0
-word = "D"
+words=["Developer","Ambush","Reddit","Food","PYGAME","PYthon"]
+words=[word.upper() for word in words]
+
+# word="FOOD"
+word = random.choice(words)
 guessed = []
 
 # SETUP game Loop
@@ -50,6 +57,10 @@ running = True
 
 def draw():
     screen.fill(WHITE)
+    #Draw title
+    text= TITLE_FONT.render("SIMPLE HANGMAN GAME",1,RED)
+    screen.blit(text,(WIDTH/2-text.get_width()/2,20))
+
     # draw word
     display_word = ""
     for letter in word:
@@ -60,6 +71,7 @@ def draw():
 
     text = WORD_FONT.render(display_word, 1, BLACK)
     screen.blit(text, (400, 200))
+
 
     # draw Buttons
     for letter in letters:
@@ -78,12 +90,10 @@ def display_message(message): #DRY concept lol
     text= WORD_FONT.render(message,1,BLACK)
     screen.blit(text,(int(WIDTH/2-text.get_width()/2),int(HEIGHT/2-text.get_height()/2)))
     pygame.display.update()
-    pygame.time.delay(3000)
+    pygame.time.delay(2000)
 
 while running:
     clock.tick(FPS)
-    draw()
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -92,7 +102,6 @@ while running:
             m_x, m_y = pygame.mouse.get_pos()
             # print(m_x,m_y)
             # print(RADIUS)
-
             for letter in letters:
                 x, y, ltr, visible = letter
                 if visible:
@@ -102,11 +111,14 @@ while running:
                         guessed.append(ltr)
                         if ltr not in word:
                             hangman_status += 1
+    draw()
     won = True
     for letter in word:
         if letter not in guessed:
             won = False
             break
+
+    draw()
     if won:
         display_message("YOU WON!!!!")
         break
